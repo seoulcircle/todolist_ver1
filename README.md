@@ -1,3 +1,13 @@
+📂 src
+├── 📂 components
+│ ├── 📄 TodoList.tsx ✅ (카테고리별 구분 컴포넌트)
+│ ├── 📄 TodoForm.tsx ✅ (할 일 입력 컴포넌트)
+│ ├── 📄 TodoItem.tsx ✅ (할 일 목록 렌더링)
+│ ├── 📄 Todo.tsx ✅ (모든 컴포넌트 통합)
+├── 📂 stores
+│ ├── 📄 useTodoStore.ts ✅ (Zustand 상태 관리)
+├── 📄 App.tsx
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
