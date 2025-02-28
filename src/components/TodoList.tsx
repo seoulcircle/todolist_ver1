@@ -1,6 +1,9 @@
 import { useTodoStore } from "../useTodoStore";
+import { SortableContext } from "@dnd-kit/sortable";
 
 import TodoItem from "./TodoItem";
+
+//DndContext와 sortableContext 추가 필요
 
 function TodoList() {
   const todos = useTodoStore((state) => state.todos); // todo list 배열
@@ -12,25 +15,33 @@ function TodoList() {
   return (
     <div>
       <h2>To Do</h2>
-      <ul>
-        {todoList?.map((todo) => (
-          <TodoItem key={todo.id} {...todo} />
-        ))}
-      </ul>
+      {/* ✅ items를 doneList의 id 배열로 설정 */}
+      <SortableContext items={todoList.map((todo) => todo.id)}>
+        <ul>
+          {todoList?.map((todo) => (
+            <TodoItem key={todo.id} {...todo} />
+          ))}
+        </ul>
+      </SortableContext>
       <hr />
       <h2>Doing</h2>
-      <ul>
-        {doingList?.map((todo) => (
-          <TodoItem key={todo.id} {...todo} />
-        ))}
-      </ul>
+      <SortableContext items={doingList.map((todo) => todo.id)}>
+        <ul>
+          {doingList?.map((todo) => (
+            <TodoItem key={todo.id} {...todo} />
+          ))}
+        </ul>
+      </SortableContext>
+
       <hr />
       <h2>Done</h2>
-      <ul>
-        {doneList?.map((todo) => (
-          <TodoItem key={todo.id} {...todo} />
-        ))}
-      </ul>
+      <SortableContext items={doneList.map((todo) => todo.id)}>
+        <ul>
+          {doneList?.map((todo) => (
+            <TodoItem key={todo.id} {...todo} />
+          ))}
+        </ul>
+      </SortableContext>
       <hr />
     </div>
   );
