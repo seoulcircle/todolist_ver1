@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTodoStore, CategoryType } from "../useTodoStore";
+import styled from "styled-components";
 
 interface IForm {
   todo: string;
   category: CategoryType;
 }
 
+const TodoFormDiv = styled.div`
+  margin: 10px 0;
+`;
 function TodoForm() {
   const { register, handleSubmit, reset } = useForm<IForm>();
   const [category, setCategory] = useState<CategoryType>("todo");
@@ -28,7 +32,7 @@ function TodoForm() {
   };
 
   return (
-    <div>
+    <TodoFormDiv>
       <div>
         <select value={category} onChange={onChange}>
           <option value="todo">To Do</option>
@@ -45,7 +49,7 @@ function TodoForm() {
         />
         <button>ADD</button>
       </form>
-    </div>
+    </TodoFormDiv>
   );
 }
 

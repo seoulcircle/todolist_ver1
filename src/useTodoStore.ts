@@ -14,7 +14,7 @@ interface TodoStore {
   addTodo: (text: string, category: CategoryType) => void; // 할 일 추가 함수
   updateCategory: (id: number, category: CategoryType) => void; // category 상태 변경 함수
   deleteTodo: (id: number) => void; // todo 삭제 함수
-  updateTodos: (newArray: ITodo[]) => void;
+  updateTodos: (newArray: ITodo[]) => void; // 한 카테고리 안에서 todo 이동시 업데이트
 }
 
 export const useTodoStore = create<TodoStore>()(

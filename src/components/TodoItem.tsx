@@ -1,6 +1,11 @@
 import { useTodoStore, ITodo, CategoryType } from "../useTodoStore";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import styled from "styled-components";
+
+const TodoLi = styled.li`
+  margin: 8px 0;
+`;
 
 function TodoItem({ text, category, id }: ITodo) {
   // updateCategory 함수 가져오기
@@ -15,6 +20,7 @@ function TodoItem({ text, category, id }: ITodo) {
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const newCategory = event.currentTarget.value as CategoryType | "delete";
 
+    console.log("a");
     if (newCategory === "delete") {
       deleteTodo(id);
     } else {
@@ -29,11 +35,15 @@ function TodoItem({ text, category, id }: ITodo) {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    marginRight: "10px",
+    cursor: "pointer",
   };
 
   return (
-    <li ref={setNodeRef} {...attributes} {...listeners} style={style}>
-      <span>{text}</span>
+    <TodoLi ref={setNodeRef} style={style}>
+      <span {...attributes} {...listeners}>
+        {text}
+      </span>
       <button value="todo" onClick={onClick} disabled={category === "todo"}>
         todo
       </button>
@@ -46,7 +56,7 @@ function TodoItem({ text, category, id }: ITodo) {
       <button value="delete" onClick={onClick}>
         delete
       </button>
-    </li>
+    </TodoLi>
   );
 }
 
