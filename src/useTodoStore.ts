@@ -30,11 +30,12 @@ export const useTodoStore = create<TodoStore>()(
 
       // 받은 id로 li를 찾고 받은 category로 상태 변경
       updateCategory: (id, category) =>
-        set((state) => ({
-          todos: state.todos.map((todo) =>
+        set((state) => {
+          const updatedTodos = state.todos.map((todo) =>
             todo.id === id ? { ...todo, category } : todo
-          ),
-        })),
+          );
+          return { todos: [...updatedTodos] }; // ✅ 상태 변경 감지
+        }),
 
       // 기존 배열에서 id값이 같은 todo 삭제
       deleteTodo: (id) =>
@@ -43,9 +44,17 @@ export const useTodoStore = create<TodoStore>()(
         })),
 
       // 순서 바뀐 todos 업데이트
-      updateTodos: (newArray) =>
-        set({
-          todos: newArray,
+      // updateTodos: (newArray) =>
+      //   set({
+      //     todos: newArray,
+      //   }),
+
+      updateTodos: (newTodos) =>
+        set(() => {
+          // console.log("🔄 Before updateTodos:", state.todos);
+          // console.log("✅ New todos:", newTodos);
+
+          return { todos: [...newTodos] }; // ✅ 새로운 배열을 반환하여 상태 변경 감지
         }),
     }),
 

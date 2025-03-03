@@ -5,9 +5,16 @@ import styled from "styled-components";
 
 const TodoLi = styled.li`
   margin: 8px 0;
+  color: ${(props) => props.theme.bgColor};
+  padding: 10px 20px;
+  border-radius: 15px;
 `;
 
-function TodoItem({ text, category, id }: ITodo) {
+interface TodoItemProps extends ITodo {
+  dragOverlay?: boolean; // ✅ 드래그 오버레이용 prop 추가 (선택적)
+}
+
+function TodoItem({ text, category, id, dragOverlay = false }: TodoItemProps) {
   // updateCategory 함수 가져오기
   const updateCategory = useTodoStore((state) => {
     return state.updateCategory;
@@ -20,7 +27,6 @@ function TodoItem({ text, category, id }: ITodo) {
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const newCategory = event.currentTarget.value as CategoryType | "delete";
 
-    console.log("a");
     if (newCategory === "delete") {
       deleteTodo(id);
     } else {
@@ -36,26 +42,27 @@ function TodoItem({ text, category, id }: ITodo) {
     transform: CSS.Transform.toString(transform),
     transition,
     marginRight: "10px",
-    cursor: "pointer",
+    cursor: dragOverlay ? "grabbing" : "grab",
+    backgroundColor: dragOverlay ? "yellow" : "black",
   };
 
   return (
     <TodoLi ref={setNodeRef} style={style}>
-      <span {...attributes} {...listeners}>
-        {text}
-      </span>
-      <button value="todo" onClick={onClick} disabled={category === "todo"}>
-        todo
-      </button>
-      <button value="doing" onClick={onClick} disabled={category === "doing"}>
-        doing
-      </button>
-      <button value="done" onClick={onClick} disabled={category === "done"}>
-        done
-      </button>
-      <button value="delete" onClick={onClick}>
-        delete
-      </button>
+      <div {...attributes} {...listeners}>
+        <span>{text}</span>
+        <button value="todo" onClick={onClick} disabled={category === "todo"}>
+          todo
+        </button>
+        <button value="doing" onClick={onClick} disabled={category === "doing"}>
+          doing
+        </button>
+        <button value="done" onClick={onClick} disabled={category === "done"}>
+          done
+        </button>
+        <button value="delete" onClick={onClick}>
+          delete
+        </button>
+      </div>
     </TodoLi>
   );
 }

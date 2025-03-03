@@ -1,77 +1,98 @@
-import { useTodoStore, ITodo, CategoryType } from "../useTodoStore";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
+import { useState } from "react";
+import { useTodoStore, ITodo } from "../useTodoStore";
+import { arrayMove } from "@dnd-kit/sortable";
+import {
+  DndContext,
+  closestCenter,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+} from "@dnd-kit/core";
+import Droppable from "./Droppable";
 import TodoItem from "./TodoItem";
 import styled from "styled-components";
-import { idText } from "typescript";
 
-const TodoUl = styled.ul`
-  margin: 10px;
+const TodoLists = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
 `;
 
-interface IForm {
-  todo: string;
-  category: CategoryType;
-}
-
 function TodoList() {
-  const todos = useTodoStore((state) => state.todos); // todo list 배열
+  const todos = useTodoStore((state) => state.todos); // 기존 todo list 배열
   const updateTodos = useTodoStore((state) => state.updateTodos); // todo list 순서 업데이트 함수
-  const updateCategory = useTodoStore((state) => state.updateCategory); // todo list 순서 업데이트 함수
+  const updateCategory = useTodoStore((state) => state.updateCategory); // 카테고리 변경 시 todo list 순서 업데이트 함수
+  const [activeTodo, setActiveTodo] = useState<ITodo | null>(null);
 
-  const todoList = todos.filter((todo) => todo.category === "todo");
-  const doingList = todos.filter((doing) => doing.category === "doing");
-  const doneList = todos.filter((done) => done.category === "done");
+  const lists = [
+    {
+      id: "todo",
+      title: "To Do",
+      items: todos.filter((todo) => todo.category === "todo"),
+    },
+    {
+      id: "doing",
+      title: "Doing",
+      items: todos.filter((todo) => todo.category === "doing"),
+    },
+    {
+      id: "done",
+      title: "Done",
+      items: todos.filter((todo) => todo.category === "done"),
+    },
+  ];
 
+  const onDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    console.log(active);
+    setActiveTodo(todos.find((todo) => todo.id === active.id) || null);
+  };
   const onDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event; // 드래그 한 요소, 드랍 된 위치
+    setActiveTodo(null);
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-    if (!over || active.id === over.id) return; // 사용자가 리스트 바깥에 드롭한 경우, 또는 같은 위치라면 변경하지 않음
+    // ✅ 1. 드롭한 위치의 새로운 카테고리 찾기
+    let newCategory = over?.data.current?.sortable?.containerId || over.id;
 
-    // const newArray = arrayMove(originalArray, oldIndex, newIndex);
-    const oldIndex = todos.findIndex((todo) => todo.id === active.id);
-    const newIndex = todos.findIndex((todo) => todo.id === over.id);
-    const newCategory = over?.data.current?.sortable.containerId;
-    console.log(newCategory);
-    const newArray: ITodo[] = arrayMove(todos, oldIndex, newIndex);
+    // ✅ 2. `newCategory`가 유효한 리스트 id인지 확인
+    if (!["todo", "doing", "done"].includes(newCategory)) return;
+
+    // ✅ 3. 카테고리 변경
     updateCategory(active.id as number, newCategory);
-    updateTodos(newArray);
+
+    // ✅ 4. 변경된 상태에서 최신 todos 가져오기
+    const updatedTodos = useTodoStore.getState().todos; // 변경된 최신 상태의 todos
+
+    // ✅ 5. 새로운 카테고리 내에서 정렬하기
+    const filteredTodos = updatedTodos.filter(
+      (todo) => todo.category === newCategory
+    );
+    const oldIndex = filteredTodos.findIndex((todo) => todo.id === active.id);
+    const newIndex = filteredTodos.findIndex((todo) => todo.id === over?.id);
+
+    const newArray: ITodo[] = arrayMove(filteredTodos, oldIndex, newIndex);
+    // ✅ 6. 새로운 정렬 상태를 업데이트
+    updateTodos([
+      ...updatedTodos.filter((todo) => todo.category !== newCategory),
+      ...newArray,
+    ]);
   };
 
   return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-      <div>
-        <h2>To Do</h2>
-        {/* ✅ items를 doneList의 id 배열로 설정 */}
-        <SortableContext id="todo" items={todoList.map((todo) => todo.id)}>
-          <TodoUl>
-            {todoList?.map((todo) => (
-              <TodoItem key={todo.id} {...todo} />
-            ))}
-          </TodoUl>
-        </SortableContext>
-
-        <hr />
-        <h2>Doing</h2>
-        <SortableContext id="doing" items={doingList.map((todo) => todo.id)}>
-          <TodoUl>
-            {doingList?.map((todo) => (
-              <TodoItem key={todo.id} {...todo} />
-            ))}
-          </TodoUl>
-        </SortableContext>
-
-        <hr />
-        <h2>Done</h2>
-        <SortableContext id="done" items={doneList.map((todo) => todo.id)}>
-          <TodoUl>
-            {doneList?.map((todo) => (
-              <TodoItem key={todo.id} {...todo} />
-            ))}
-          </TodoUl>
-        </SortableContext>
-        <hr />
-      </div>
+    <DndContext
+      collisionDetection={closestCenter}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+    >
+      <TodoLists>
+        {lists.map(({ id, title, items }) => (
+          <Droppable key={id} id={id} items={items} title={title} />
+        ))}
+        <DragOverlay>
+          {activeTodo ? <TodoItem {...activeTodo} dragOverlay /> : null}
+        </DragOverlay>
+      </TodoLists>
     </DndContext>
   );
 }
