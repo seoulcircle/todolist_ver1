@@ -10,11 +10,21 @@ const TodoLi = styled.li`
   padding: 10px 20px;
   border-radius: 15px;
   position: relative;
+  list-style: none;
+  &:hover {
+    color: aqua;
+  }
 `;
 const TodoLiDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+`;
+const ButtonMore = styled.button`
+  color: ${(props) => props.theme.textColor};
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
 `;
 
 const ButtonTodo = styled.div`
@@ -22,7 +32,7 @@ const ButtonTodo = styled.div`
   z-index: 20;
 `;
 interface TodoItemProps extends ITodo {
-  dragOverlay?: boolean; // ✅ 드래그 오버레이용 prop 추가 (선택적)
+  dragOverlay?: boolean; // dragOverlay prop 추가 (선택적)
 }
 
 function TodoItem({ text, category, id, dragOverlay = false }: TodoItemProps) {
@@ -55,7 +65,7 @@ function TodoItem({ text, category, id, dragOverlay = false }: TodoItemProps) {
     transform: CSS.Transform.toString(transform),
     transition,
     cursor: dragOverlay ? "grabbing" : "grab",
-    backgroundColor: dragOverlay ? "yellow" : "black",
+    backgroundColor: dragOverlay ? "#253d86" : "black",
   };
 
   return (
@@ -63,12 +73,12 @@ function TodoItem({ text, category, id, dragOverlay = false }: TodoItemProps) {
       <TodoLiDiv {...attributes} {...listeners}>
         <span>{text}</span>
         <div>
-          <button
+          <ButtonMore
             onClick={() => setIsVisible(!isVisible)}
             onPointerDown={(e) => e.stopPropagation()}
           >
-            버튼
-          </button>
+            ···
+          </ButtonMore>
           {isVisible && (
             <ButtonTodo onPointerDown={(e) => e.stopPropagation()}>
               <button
