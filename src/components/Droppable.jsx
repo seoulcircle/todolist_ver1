@@ -4,20 +4,21 @@ import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
 import TodoItem from "./TodoItem";
 import styled from "styled-components";
 
-const TodoUl = styled.ul`
-  margin: 10px;
-  width: 100%;
-  min-width: 100px;
-  height: 100%;
+const DroppableDiv = styled.div`
+  width: 200px;
+  height: 300px;
   padding: 20px;
   border-right: 1px solid white;
+  overflow: scroll;
 `;
+
+const TodoUl = styled.ul``;
 
 const Droppable = ({ id, items, title }) => {
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <div>
+    <DroppableDiv>
       <h2>{title}</h2>
       <SortableContext
         id={id}
@@ -30,7 +31,7 @@ const Droppable = ({ id, items, title }) => {
           ))}
         </TodoUl>
       </SortableContext>
-    </div>
+    </DroppableDiv>
   );
 };
 

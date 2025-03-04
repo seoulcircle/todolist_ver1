@@ -15,7 +15,6 @@ import styled from "styled-components";
 const TodoLists = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 50px;
 `;
 
 function TodoList() {

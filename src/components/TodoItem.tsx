@@ -2,19 +2,32 @@ import { useTodoStore, ITodo, CategoryType } from "../useTodoStore";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import styled from "styled-components";
+import { useState } from "react";
 
 const TodoLi = styled.li`
   margin: 8px 0;
-  color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.textColor};
   padding: 10px 20px;
   border-radius: 15px;
+  position: relative;
+`;
+const TodoLiDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
+const ButtonTodo = styled.div`
+  position: absolute;
+  z-index: 20;
+`;
 interface TodoItemProps extends ITodo {
   dragOverlay?: boolean; // ✅ 드래그 오버레이용 prop 추가 (선택적)
 }
 
 function TodoItem({ text, category, id, dragOverlay = false }: TodoItemProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
   // updateCategory 함수 가져오기
   const updateCategory = useTodoStore((state) => {
     return state.updateCategory;
@@ -41,28 +54,51 @@ function TodoItem({ text, category, id, dragOverlay = false }: TodoItemProps) {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    marginRight: "10px",
     cursor: dragOverlay ? "grabbing" : "grab",
     backgroundColor: dragOverlay ? "yellow" : "black",
   };
 
   return (
     <TodoLi ref={setNodeRef} style={style}>
-      <div {...attributes} {...listeners}>
+      <TodoLiDiv {...attributes} {...listeners}>
         <span>{text}</span>
-        <button value="todo" onClick={onClick} disabled={category === "todo"}>
-          todo
-        </button>
-        <button value="doing" onClick={onClick} disabled={category === "doing"}>
-          doing
-        </button>
-        <button value="done" onClick={onClick} disabled={category === "done"}>
-          done
-        </button>
-        <button value="delete" onClick={onClick}>
-          delete
-        </button>
-      </div>
+        <div>
+          <button
+            onClick={() => setIsVisible(!isVisible)}
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            버튼
+          </button>
+          {isVisible && (
+            <ButtonTodo onPointerDown={(e) => e.stopPropagation()}>
+              <button
+                value="todo"
+                onClick={onClick}
+                disabled={category === "todo"}
+              >
+                TODO
+              </button>
+              <button
+                value="doing"
+                onClick={onClick}
+                disabled={category === "doing"}
+              >
+                DOING
+              </button>
+              <button
+                value="done"
+                onClick={onClick}
+                disabled={category === "done"}
+              >
+                DONE
+              </button>
+              <button value="delete" onClick={onClick}>
+                삭제
+              </button>
+            </ButtonTodo>
+          )}
+        </div>
+      </TodoLiDiv>
     </TodoLi>
   );
 }
