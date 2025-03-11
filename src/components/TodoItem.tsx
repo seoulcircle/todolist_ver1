@@ -1,4 +1,4 @@
-import { useTodoStore, ITodo, CategoryType } from "../useTodoStore";
+import { useTodoStore, ITodo, CATEGORY, CategoryType } from "../useTodoStore";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import styled from "styled-components";
@@ -74,7 +74,7 @@ function TodoItem({ text, category, id, dragOverlay = false }: TodoItemProps) {
         <span>{text}</span>
         <div>
           <ButtonMore
-            onClick={() => setIsVisible(!isVisible)}
+            onClick={() => setIsVisible((prev) => !prev)}
             onPointerDown={(e) => e.stopPropagation()}
           >
             ···
@@ -82,23 +82,23 @@ function TodoItem({ text, category, id, dragOverlay = false }: TodoItemProps) {
           {isVisible && (
             <ButtonTodo onPointerDown={(e) => e.stopPropagation()}>
               <button
-                value="todo"
+                value={CATEGORY.TODO}
                 onClick={onClick}
-                disabled={category === "todo"}
+                disabled={category === CATEGORY.TODO}
               >
                 TODO
               </button>
               <button
-                value="doing"
+                value={CATEGORY.DOING}
                 onClick={onClick}
-                disabled={category === "doing"}
+                disabled={category === CATEGORY.DOING}
               >
                 DOING
               </button>
               <button
-                value="done"
+                value={CATEGORY.DONE}
                 onClick={onClick}
-                disabled={category === "done"}
+                disabled={category === CATEGORY.DONE}
               >
                 DONE
               </button>

@@ -12,8 +12,6 @@ const DroppableDiv = styled.div`
   overflow: scroll;
 `;
 
-const TodoUl = styled.ul``;
-
 const Droppable = ({ id, items, title }) => {
   const { setNodeRef } = useDroppable({ id });
 
@@ -25,11 +23,11 @@ const Droppable = ({ id, items, title }) => {
         items={items.map((todo) => todo.id)}
         strategy={rectSortingStrategy}
       >
-        <TodoUl className="droppable" ref={setNodeRef}>
+        <ul className="droppable" ref={setNodeRef}>
           {items.map((todo) => (
             <TodoItem key={todo.id} {...todo} />
           ))}
-        </TodoUl>
+        </ul>
       </SortableContext>
     </DroppableDiv>
   );

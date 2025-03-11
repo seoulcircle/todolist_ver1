@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTodoStore, ITodo } from "../useTodoStore";
+import { useTodoStore, ITodo, CATEGORY } from "../useTodoStore";
 import { arrayMove } from "@dnd-kit/sortable";
 import {
   DndContext,
@@ -25,19 +25,19 @@ function TodoList() {
 
   const lists = [
     {
-      id: "todo",
+      id: CATEGORY.TODO,
       title: "To Do",
-      items: todos.filter((todo) => todo.category === "todo"),
+      items: todos.filter((todo) => todo.category === CATEGORY.TODO),
     },
     {
-      id: "doing",
+      id: CATEGORY.DOING,
       title: "Doing",
-      items: todos.filter((todo) => todo.category === "doing"),
+      items: todos.filter((todo) => todo.category === CATEGORY.DOING),
     },
     {
-      id: "done",
+      id: CATEGORY.DONE,
       title: "Done",
-      items: todos.filter((todo) => todo.category === "done"),
+      items: todos.filter((todo) => todo.category === CATEGORY.DONE),
     },
   ];
 
@@ -54,7 +54,8 @@ function TodoList() {
     let newCategory = over?.data.current?.sortable?.containerId || over.id;
 
     // 2. `newCategory`가 유효한 리스트 id인지 확인
-    if (!["todo", "doing", "done"].includes(newCategory)) return;
+    const VALID_CATEGORIES = new Set(Object.values(CATEGORY)); //CATEGORY의 값들을 상수로
+    if (!VALID_CATEGORIES.has(newCategory)) return; // newCategory가 "todo", "doing", "done"이 아니면 return으로 함수 종료
 
     // 3. 카테고리 변경
     updateCategory(active.id as number, newCategory);

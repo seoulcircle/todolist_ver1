@@ -1,7 +1,14 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type CategoryType = "todo" | "doing" | "done";
+export const CATEGORY = {
+  TODO: "todo",
+  DOING: "doing",
+  DONE: "done",
+} as const;
+
+export type CategoryType = (typeof CATEGORY)[keyof typeof CATEGORY];
+// "todo" | "doing" | "done"
 
 export interface ITodo {
   id: number;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useTodoStore, CategoryType } from "../useTodoStore";
+import { useTodoStore, CategoryType, CATEGORY } from "../useTodoStore";
 import styled from "styled-components";
 
 interface IForm {
@@ -13,7 +13,7 @@ const TodoFormDiv = styled.div`
 `;
 function TodoForm() {
   const { register, handleSubmit, reset } = useForm<IForm>();
-  const [category, setCategory] = useState<CategoryType>("todo");
+  const [category, setCategory] = useState<CategoryType>(CATEGORY.TODO);
 
   //addTodo 함수 가져오기
   const addTodo = useTodoStore((state) => {
@@ -35,14 +35,14 @@ function TodoForm() {
     <TodoFormDiv>
       <div>
         <select value={category} onChange={onChange}>
-          <option value="todo">To Do</option>
-          <option value="doing">Doing</option>
-          <option value="done">Done</option>
+          <option value={CATEGORY.TODO}>To Do</option>
+          <option value={CATEGORY.DOING}>Doing</option>
+          <option value={CATEGORY.DONE}>Done</option>
         </select>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <input
-          {...register("todo", {
+          {...register(CATEGORY.TODO, {
             required: "write todo",
           })}
           placeholder="write to do"
