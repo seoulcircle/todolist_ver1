@@ -1,0 +1,12 @@
+
+*.tsx linguist-detectable=true
+*.ts linguist-detectable=true
+
+# ❌ JSON 파일을 HTML로 인식하지 않도록 제외
+*.json linguist-detectable=false
+
+# ❌ public 폴더를 GitHub 언어 통계에서 제외
+public/** linguist-vendored
+
+# ❌ build 폴더를 GitHub 언어 통계에서 제외
+build/** linguist-vendored
