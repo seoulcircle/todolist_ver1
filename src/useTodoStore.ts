@@ -44,15 +44,16 @@ export const useTodoStore = create<TodoStore>()(
           return { todos: [...updatedTodos] }; // 상태 변경 감지
         }),
 
+      updateTodos: (newTodos) =>
+        set(() => {
+          return { todos: [...newTodos] }; // 새로운 배열을 반환하여 상태 변경 감지
+        }),
+
       // 기존 배열에서 id값이 같은 todo 삭제
       deleteTodo: (id) =>
         set((state) => ({
           todos: state.todos.filter((todo) => todo.id !== id), //선택된 id가 아닌 todo만 거름
         })),
-      updateTodos: (newTodos) =>
-        set(() => {
-          return { todos: [...newTodos] }; // 새로운 배열을 반환하여 상태 변경 감지
-        }),
     }),
 
     {
